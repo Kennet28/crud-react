@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
+import Api from "../services/api";
 class List extends React.Component {
     constructor(props) {
         super(props);
@@ -9,7 +10,7 @@ class List extends React.Component {
         }
     }
     dataDelete = (id) => {
-        fetch("https://workersapi.000webhostapp.com/?delete=" + id)
+        fetch(Api + "?delete=" + id)
             .then(response => response.json())
             .then((data) => {
                 this.dataCharge();
@@ -17,7 +18,7 @@ class List extends React.Component {
             .catch(console.log);
     }
     dataCharge() {
-        fetch("https://workersapi.000webhostapp.com/")
+        fetch(Api)
             .then(response => response.json())
             .then((data) => {
                 this.setState({ chargeData: true, workers: data })
@@ -39,38 +40,56 @@ class List extends React.Component {
                     </div>
                     <div className="card-body">
                         <h4 className="card-title">List of workers</h4>
-                        <table className="table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    workers.map(
-                                        (worker) => (
-                                            <tr key={worker.id}>
-                                                <td>{worker.id}</td>
-                                                <td>{worker.name}</td>
-                                                <td>{worker.email}</td>
-                                                <td>
-                                                    <div className="btn-group" role="group" aria-label="">
-                                                        <Link to={"/Edit"} className="btn btn-warning">Edit</Link>
-                                                        <button onClick={() => this.dataDelete(worker.id)}
-                                                            className="btn btn-danger">Delete</button>
-                                                    </div>
+                        <hr></hr>
+                        <div className="table-responsive">
+                            <table className="table">
+                                <thead className="table-dark">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        workers.map(
+                                            (worker) => {
+                                                if (worker.success!==0) {
+                                                    console.log(worker);
+                                                    return (
+                                                        <tr key={worker.id}>
+                                                            <td>{worker.id}</td>
+                                                            <td>{worker.name}</td>
+                                                            <td>{worker.email}</td>
+                                                            <td>
+                                                                <div className="btn-group" role="group" aria-label="">
+                                                                    <Link to={"/Edit/" + worker.id} className="btn btn-warning">Edit</Link>
+                                                                    <button onClick={() => this.dataDelete(worker.id)}
+                                                                        className="btn btn-danger">Delete</button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                }
+                                                else {
+                                                    return (
+                                                        <tr key={""} className="text-danger">
+                                                            <td>No data</td>
+                                                            <td>No data</td>
+                                                            <td>No data</td>
+                                                            <td>No data</td>
+                                                        </tr>
+                                                    )
 
-                                                </td>
-                                            </tr>
+                                                }
+                                            }
                                         )
-                                    )
-                                }
+                                    }
 
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div className="card-footer text-muted">
 
